@@ -11,7 +11,7 @@ import java.util.List;
 @Setter
 @ToString
 @NoArgsConstructor
-public class Course {
+public class Course{
 
     @Id
     @Column(name = "course_name")
