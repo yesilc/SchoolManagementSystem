@@ -13,8 +13,8 @@ public class TeacherServiceImpl implements TeacherService {
     TeacherRepository teacherRepository;
 
     @Override
-    public Teacher getTeacher(String teacherName) {
-        Teacher teacher = teacherRepository.findById(teacherName).orElseThrow(() -> new RuntimeException("There is no such a teacher"));
+    public Teacher getTeacher(Long teacherId) {
+        Teacher teacher = teacherRepository.findById(teacherId).orElseThrow(() -> new RuntimeException("There is no such a teacher"));
         return teacher;
     }
 
@@ -24,8 +24,8 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
-    public void deleteTeacher(String teacherName) {
-        teacherRepository.deleteById(teacherName);
+    public void deleteTeacher(Long teacherId) {
+        teacherRepository.deleteById(teacherId);
     }
 
     @Override

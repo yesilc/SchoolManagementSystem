@@ -1,17 +1,20 @@
 package com.SchoolManagementSystem.repository;
 
 import com.SchoolManagementSystem.entity.Course;
-import com.SchoolManagementSystem.entity.Student;
-import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-public interface CourseRepository extends JpaRepository<Course, String> {
+import java.util.Optional;
 
-    @Modifying
+public interface CourseRepository extends JpaRepository<Course, Long> {
+
+    /*@Modifying
     @Transactional
-    @Query("Delete FROM Course c WHERE c.id = :courseId AND :student MEMBER OF c.registeredStudents")
-    Course deleteStudentFromCourse(@Param("courseName") String courseName, @Param("student") Student student);
+    @Query("UPDATE FROM Course c SET c.registeredStudents = (SELECT s FROM Student s WHERE s.id != :studentId" +
+            "AND s MEMBER OF c.registeredStudents) WHERE c.courseName = :courseName")
+    void deleteStudentFromCourse(@Param("courseName") String courseName, @Param("studentId") Integer studentId);*/
+
+    @Query("SELECT c FROM Course c JOIN FETCH c.registeredStudents WHERE c.courseName = :courseName")
+    Optional<Course> fetchCourseWithItsStudents(@Param("courseName") String courseName);
 }

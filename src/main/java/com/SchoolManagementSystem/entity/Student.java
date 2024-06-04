@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -16,8 +17,8 @@ import java.util.List;
 public class Student {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     private String name;
     private String surname;
     //@Column(name = "courses_taken")
@@ -28,5 +29,5 @@ public class Student {
             inverseJoinColumns = @JoinColumn(name = "course_id")
     )
     @JsonBackReference
-    private List<Course> courses;
+    private List<Course> courses = new ArrayList<>();
 }

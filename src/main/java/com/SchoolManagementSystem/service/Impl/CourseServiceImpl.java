@@ -8,7 +8,8 @@ import com.SchoolManagementSystem.service.CourseService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
+import java.util.List;
+
 
 @Service
 @AllArgsConstructor
@@ -18,9 +19,8 @@ public class CourseServiceImpl implements CourseService {
     StudentRepository studentRepository;
 
     @Override
-    public Course getCourse(String courseName) {
-        Course course = courseRepository.findById(courseName).orElseThrow(()-> new RuntimeException("There is no such a course"));
-        return course ;
+    public Course getCourse(Long courseId) {
+        return courseRepository.findById(courseId).orElseThrow(()-> new RuntimeException("There is no such a course"));
     }
 
     @Override
@@ -29,35 +29,49 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public void deleteCourse(String courseName) {
-        courseRepository.deleteById(courseName);
+    public void deleteCourse(Long courseId) {
+        courseRepository.deleteById(courseId);
     }
 
-    @Override
-    public Course deleteStudentFromCourse(String courseName, Integer studentId) {
-        Optional<Course> optionalCourse = courseRepository.findById(courseName);
-        Optional<Student> optionalStudent = studentRepository.findById(studentId);
 
-        if(optionalCourse.isPresent() && optionalStudent.isPresent()){
-            Student student = optionalStudent.get();
-            courseRepository.deleteStudentFromCourse(courseName, student);
-        }else {
-            throw new RuntimeException("Course or Student not found");
+    @Override
+    public void deleteStudentFromCourse(Long courseId, Long studentId) {
+        Student student = studentRepository.findById(studentId)
+                .orElseThrow(() -> new RuntimeException("There is no such a Student"));
+        for(Course course : student.getCourses()){
+            if (course.getCourseId() == courseId){
+                student.getCourses().remove(course);
+                studentRepository.save(student);
+                return;
+            } else {
+                throw new RuntimeException("There is no such student registered for this course");
+            }
         }
-
-        return optionalCourse.get();
     }
 
+
     @Override
-    public Course registerStudentForCourse(Integer studentId, String courseName) {
+    public Course registerStudentForCourse(Long studentId, Long courseId) {
+
         Student student = studentRepository.findById(studentId).orElseThrow(() -> new RuntimeException("There is no sucha a student"));
-        Course course = courseRepository.findById(courseName).orElseThrow(() -> new RuntimeException("There is no such a course"));
+        Course course = courseRepository.findById(courseId).orElseThrow(() -> new RuntimeException("There is no such a course"));
 
         course.getRegisteredStudents().add(student);
         student.getCourses().add(course);
 
         studentRepository.save(student);
         return courseRepository.save(course);
+    }
+
+    @Override
+    public List<Student> getStudentsFromCourse(Long courseId) {
+        Course course = courseRepository.findById(courseId).orElseThrow(()-> new RuntimeException("There is no such a course"));
+        return course.getRegisteredStudents();
+    }
+
+    @Override
+    public List<Course> getAllCourses() {
+        return courseRepository.findAll();
     }
 
     @Override

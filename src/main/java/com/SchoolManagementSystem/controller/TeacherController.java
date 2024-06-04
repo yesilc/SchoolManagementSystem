@@ -15,16 +15,16 @@ public class TeacherController {
     TeacherService teacherService;
 
     @GetMapping("/{teacherName}")
-    public ResponseEntity<Teacher> getTeacher(@PathVariable String teacherName){
-        return new ResponseEntity<>(teacherService.getTeacher(teacherName), HttpStatus.OK);
+    public ResponseEntity<Teacher> getTeacher(@PathVariable Long teacherId){
+        return new ResponseEntity<>(teacherService.getTeacher(teacherId), HttpStatus.OK);
     }
     @PostMapping("/create")
     public ResponseEntity<Teacher> createTeacher(@RequestBody Teacher teacher){
         return new ResponseEntity<>(teacherService.createTeacher(teacher), HttpStatus.CREATED);
     }
     @PutMapping("/updateTeacher/{teacherName}")
-    public ResponseEntity<Teacher> updateTeacher(@PathVariable String teacherName, @RequestBody Teacher teacher){
-        Teacher existingTeacher = teacherService.getTeacher(teacherName);
+    public ResponseEntity<Teacher> updateTeacher(@PathVariable Long teacherId, @RequestBody Teacher teacher){
+        Teacher existingTeacher = teacherService.getTeacher(teacherId);
         existingTeacher.setName(teacher.getName());
         existingTeacher.setSurname(teacher.getSurname());
         existingTeacher.setEmail(teacher.getEmail());
@@ -33,8 +33,8 @@ public class TeacherController {
         return new ResponseEntity<>(teacherService.updateTeacher(existingTeacher),HttpStatus.OK);
     }
     @DeleteMapping("/deleteTeacher/{teacherName}")
-    public ResponseEntity<Void> deleteTeacher(@PathVariable String teacherName){
-        teacherService.deleteTeacher(teacherName);
+    public ResponseEntity<Void> deleteTeacher(@PathVariable Long teacherId){
+        teacherService.deleteTeacher(teacherId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }
