@@ -2,6 +2,7 @@ package com.SchoolManagementSystem.service;
 
 import com.SchoolManagementSystem.entity.Course;
 import com.SchoolManagementSystem.entity.Student;
+import jakarta.servlet.http.HttpServletResponse;
 
 import java.util.List;
 
@@ -15,4 +16,5 @@ public interface CourseService {
      void deleteStudentFromCourse(Long courseId, Long studentId);
      List<Course> getAllCourses();
      List<Student> getStudentsFromCourse(Long courseId);
+     void generateCourseInfos(HttpServletResponse response) throws Exception;
 }

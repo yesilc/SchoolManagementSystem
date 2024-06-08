@@ -1,5 +1,6 @@
 package com.SchoolManagementSystem.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -26,4 +27,7 @@ public class Course{
     private Teacher teacher;
     @ManyToMany(mappedBy = "courses", fetch = FetchType.EAGER)
     private List<Student> registeredStudents = new ArrayList<>();
+    @OneToMany(mappedBy = "course")
+    @JsonBackReference
+    private List<Grade> grades = new ArrayList<>();
 }

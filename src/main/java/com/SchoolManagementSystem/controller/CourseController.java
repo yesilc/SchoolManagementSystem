@@ -3,6 +3,7 @@ package com.SchoolManagementSystem.controller;
 import com.SchoolManagementSystem.entity.Course;
 import com.SchoolManagementSystem.entity.Student;
 import com.SchoolManagementSystem.service.CourseService;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -62,6 +63,18 @@ public class CourseController {
     @GetMapping("/getRegisteredStudents/{courseName}")
     public ResponseEntity<List<Student>> getRegisteredStudents(@PathVariable Long courseId){
         return new ResponseEntity<>(courseService.getStudentsFromCourse(courseId), HttpStatus.OK);
+    }
+    @GetMapping("/docAllCourseInfos")
+    public void docAllCourseInfos(HttpServletResponse response) throws Exception{
+        response.setContentType("application/octet-stream");
+        String headerKey = "Content-Disposition";
+        String headerValue = "attachment;filename=courses.xls";
+        response.setHeader(headerKey, headerValue);
+
+        courseService.generateCourseInfos(response);
+        response.flushBuffer();
+
+
     }
 
 }

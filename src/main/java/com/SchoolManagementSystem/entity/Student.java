@@ -30,4 +30,8 @@ public class Student {
     )
     @JsonBackReference
     private List<Course> courses = new ArrayList<>();
+
+    @JsonBackReference
+    @OneToMany(mappedBy = "student")
+    private List<Grade> grade = new ArrayList<>();
 }
