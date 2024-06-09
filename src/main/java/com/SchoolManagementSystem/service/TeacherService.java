@@ -1,10 +1,12 @@
 package com.SchoolManagementSystem.service;
 
+import com.SchoolManagementSystem.DTO.TeacherDTO;
 import com.SchoolManagementSystem.entity.Teacher;
 
 public interface TeacherService {
-    Teacher createTeacher(Teacher teacher);
     Teacher getTeacher(Long teacherId);
-    Teacher updateTeacher(Teacher teacher);
+    TeacherDTO createTeacher(Teacher teacher);
+    TeacherDTO getTeacherDTO(Long teacherId);
+    TeacherDTO updateTeacher(Teacher teacher);
     void deleteTeacher(Long teacherId);
 }

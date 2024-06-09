@@ -1,6 +1,5 @@
 package com.SchoolManagementSystem.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -28,10 +27,9 @@ public class Student {
             joinColumns = @JoinColumn(name = "student_id"),
             inverseJoinColumns = @JoinColumn(name = "course_id")
     )
-    @JsonBackReference
     private List<Course> courses = new ArrayList<>();
 
-    @JsonBackReference
+
     @OneToMany(mappedBy = "student")
     private List<Grade> grade = new ArrayList<>();
 }

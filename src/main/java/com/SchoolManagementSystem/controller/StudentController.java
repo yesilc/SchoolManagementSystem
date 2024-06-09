@@ -1,5 +1,6 @@
 package com.SchoolManagementSystem.controller;
 
+import com.SchoolManagementSystem.DTO.StudentDTO;
 import com.SchoolManagementSystem.entity.Student;
 import com.SchoolManagementSystem.service.StudentService;
 import lombok.AllArgsConstructor;
@@ -15,16 +16,16 @@ public class StudentController {
     StudentService studentService;
 
     @GetMapping("/{id}")
-    public ResponseEntity<Student> getStudent(@PathVariable Long id){
-        return new ResponseEntity<>(studentService.getStudent(id), HttpStatus.OK);
+    public ResponseEntity<StudentDTO> getStudent(@PathVariable Long id){
+        return new ResponseEntity<>(studentService.getStudentDTO(id), HttpStatus.OK);
     }
 
     @PostMapping("/create")
-    public ResponseEntity<Student> createStudent(@RequestBody Student student){
+    public ResponseEntity<StudentDTO> createStudent(@RequestBody Student student){
         return new ResponseEntity<>(studentService.createStudent(student),HttpStatus.CREATED);
     }
     @PutMapping("/updateStudent/{studentId}")
-    public ResponseEntity<Student> updateStudent(@PathVariable Long studentId, @RequestBody Student student){
+    public ResponseEntity<StudentDTO> updateStudent(@PathVariable Long studentId, @RequestBody Student student){
        Student existingStudent = studentService.getStudent(studentId);
        existingStudent.setId(student.getId());
        existingStudent.setName(student.getName());

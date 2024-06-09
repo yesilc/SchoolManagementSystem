@@ -1,6 +1,8 @@
 package com.SchoolManagementSystem.service.Impl;
 
+import com.SchoolManagementSystem.DTO.StudentDTO;
 import com.SchoolManagementSystem.entity.Student;
+import com.SchoolManagementSystem.mapper.StudentMapper;
 import com.SchoolManagementSystem.repository.StudentRepository;
 import com.SchoolManagementSystem.service.StudentService;
 import lombok.AllArgsConstructor;
@@ -13,8 +15,14 @@ public class StudentServiceImpl implements StudentService {
     StudentRepository studentRepository;
 
     @Override
-    public Student getStudent(Long studentId) {
+    public StudentDTO getStudentDTO(Long studentId) {
         Student student = studentRepository.findById(studentId).orElseThrow(() -> new RuntimeException("There is no such student with that ID"));
+        return StudentMapper.mapToStudentDTO(student, new StudentDTO());
+    }
+
+    @Override
+    public Student getStudent(Long studentId) {
+        Student student = studentRepository.findById(studentId).orElseThrow(() -> new RuntimeException("There is no such a student"));
         return student;
     }
 
@@ -24,14 +32,15 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public Student updateStudent(Student student) {
-        return studentRepository.save(student);
+    public StudentDTO updateStudent(Student student) {
+        Student student1 = studentRepository.save(student);
+        return StudentMapper.mapToStudentDTO(student1, new StudentDTO());
     }
 
     @Override
-    public Student createStudent(Student student) {
-        studentRepository.save(student);
-        return student;
+    public StudentDTO createStudent(Student student) {
+        Student student1 = studentRepository.save(student);
+        return StudentMapper.mapToStudentDTO(student1, new StudentDTO());
     }
 
 

@@ -1,7 +1,11 @@
 package com.SchoolManagementSystem.service.Impl;
 
+import com.SchoolManagementSystem.DTO.CourseDTO;
+import com.SchoolManagementSystem.DTO.StudentDTO;
 import com.SchoolManagementSystem.entity.Course;
 import com.SchoolManagementSystem.entity.Student;
+import com.SchoolManagementSystem.mapper.CourseMapper;
+import com.SchoolManagementSystem.mapper.StudentMapper;
 import com.SchoolManagementSystem.repository.CourseRepository;
 import com.SchoolManagementSystem.repository.StudentRepository;
 import com.SchoolManagementSystem.service.CourseService;
@@ -25,12 +29,19 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public Course getCourse(Long courseId) {
-        return courseRepository.findById(courseId).orElseThrow(()-> new RuntimeException("There is no such a course"));
+        return courseRepository.findById(courseId).orElseThrow(() -> new RuntimeException("There is no such a course"));
     }
 
     @Override
-    public Course updateCourse(Course course) {
-        return courseRepository.save(course);
+    public CourseDTO getCourseDTO(Long courseId) {
+        Course course = courseRepository.findById(courseId).orElseThrow(()-> new RuntimeException("There is no such a course"));
+        return CourseMapper.mapToCourseDTO(course, new CourseDTO());
+    }
+
+    @Override
+    public CourseDTO updateCourse(Course course) {
+        Course course1 = courseRepository.save(course);
+        return CourseMapper.mapToCourseDTO(course1, new CourseDTO());
     }
 
     @Override
@@ -86,7 +97,7 @@ public class CourseServiceImpl implements CourseService {
 
 
     @Override
-    public Course registerStudentForCourse(Long studentId, Long courseId) {
+    public CourseDTO registerStudentForCourse(Long studentId, Long courseId) {
 
         Student student = studentRepository.findById(studentId).orElseThrow(() -> new RuntimeException("There is no sucha a student"));
         Course course = courseRepository.findById(courseId).orElseThrow(() -> new RuntimeException("There is no such a course"));
@@ -95,22 +106,28 @@ public class CourseServiceImpl implements CourseService {
         student.getCourses().add(course);
 
         studentRepository.save(student);
-        return courseRepository.save(course);
+        Course course1 = courseRepository.save(course);
+        return CourseMapper.mapToCourseDTO(course1, new CourseDTO());
     }
 
     @Override
-    public List<Student> getStudentsFromCourse(Long courseId) {
+    public List<StudentDTO> getStudentsFromCourse(Long courseId) {
         Course course = courseRepository.findById(courseId).orElseThrow(()-> new RuntimeException("There is no such a course"));
-        return course.getRegisteredStudents();
+        List<StudentDTO> studentDTOs = course.getRegisteredStudents().stream()
+                .map(student -> StudentMapper.mapToStudentDTO(student, new StudentDTO())).toList();
+        return studentDTOs;
     }
 
     @Override
-    public List<Course> getAllCourses() {
-        return courseRepository.findAll();
+    public List<CourseDTO> getAllCourses() {
+        List<CourseDTO> courseDTOs = courseRepository.findAll().stream()
+                .map(course -> CourseMapper.mapToCourseDTO(course, new CourseDTO())).toList();
+        return courseDTOs;
     }
 
     @Override
-    public Course createCourse(Course course) {
-        return courseRepository.save(course);
+    public CourseDTO createCourse(Course course) {
+        Course course1 = courseRepository.save(course);
+        return CourseMapper.mapToCourseDTO(course1, new CourseDTO());
     }
 }

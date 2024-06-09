@@ -1,11 +1,13 @@
 package com.SchoolManagementSystem.service;
 
+import com.SchoolManagementSystem.DTO.StudentDTO;
 import com.SchoolManagementSystem.entity.Student;
 
 
 public interface StudentService {
-    Student createStudent(Student student);
-    Student updateStudent(Student student);
+    StudentDTO createStudent(Student student);
+    StudentDTO updateStudent(Student student);
+    StudentDTO getStudentDTO(Long studentId);
     Student getStudent(Long studentId);
     void deleteStudent(Long studentId);
 

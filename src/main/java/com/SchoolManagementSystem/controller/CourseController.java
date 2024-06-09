@@ -1,7 +1,8 @@
 package com.SchoolManagementSystem.controller;
 
+import com.SchoolManagementSystem.DTO.CourseDTO;
+import com.SchoolManagementSystem.DTO.StudentDTO;
 import com.SchoolManagementSystem.entity.Course;
-import com.SchoolManagementSystem.entity.Student;
 import com.SchoolManagementSystem.service.CourseService;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
@@ -19,19 +20,19 @@ public class CourseController {
     CourseService courseService;
 
     @GetMapping("/{courseId}")
-    public ResponseEntity<Course> getCourse(@PathVariable Long courseId){
-        return new ResponseEntity<>(courseService.getCourse(courseId), HttpStatus.OK);
+    public ResponseEntity<CourseDTO> getCourseDTO(@PathVariable Long courseId){
+        return new ResponseEntity<>(courseService.getCourseDTO(courseId), HttpStatus.OK);
     }
     @PostMapping("/create")
-    public ResponseEntity<Course> createCourse(@RequestBody Course course){
+    public ResponseEntity<CourseDTO> createCourse(@RequestBody Course course){
         return new ResponseEntity<>(courseService.createCourse(course), HttpStatus.CREATED);
     }
     @PostMapping("/{courseId}/addStudent/{studentId}")
-    public ResponseEntity<Course> addStudentToCourse(@PathVariable Long courseId, @PathVariable Long studentId){
+    public ResponseEntity<CourseDTO> addStudentToCourse(@PathVariable Long courseId, @PathVariable Long studentId){
         return new ResponseEntity<>(courseService.registerStudentForCourse(studentId,courseId), HttpStatus.OK);
     }
     @PutMapping("/updateCourse/{courseName}")
-    public ResponseEntity<Course> updateCourse(@RequestBody Course course, @PathVariable Long courseId){
+    public ResponseEntity<CourseDTO> updateCourse(@RequestBody Course course, @PathVariable Long courseId){
         Course existingCourse = courseService.getCourse(courseId);
         existingCourse.setCourseName(course.getCourseName());
         existingCourse.setTeacher(course.getTeacher());
@@ -57,11 +58,11 @@ public class CourseController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
     @GetMapping("/getAllCourses")
-    public ResponseEntity<List<Course>> getAllCourses(){
+    public ResponseEntity<List<CourseDTO>> getAllCourses(){
         return new ResponseEntity<>(courseService.getAllCourses(),HttpStatus.OK);
     }
-    @GetMapping("/getRegisteredStudents/{courseName}")
-    public ResponseEntity<List<Student>> getRegisteredStudents(@PathVariable Long courseId){
+    @GetMapping("/getRegisteredStudents/{courseId}")
+    public ResponseEntity<List<StudentDTO>> getRegisteredStudents(@PathVariable Long courseId){
         return new ResponseEntity<>(courseService.getStudentsFromCourse(courseId), HttpStatus.OK);
     }
     @GetMapping("/docAllCourseInfos")

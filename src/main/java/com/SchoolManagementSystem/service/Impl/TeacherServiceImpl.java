@@ -1,6 +1,8 @@
 package com.SchoolManagementSystem.service.Impl;
 
+import com.SchoolManagementSystem.DTO.TeacherDTO;
 import com.SchoolManagementSystem.entity.Teacher;
+import com.SchoolManagementSystem.mapper.TeacherMapper;
 import com.SchoolManagementSystem.repository.TeacherRepository;
 import com.SchoolManagementSystem.service.TeacherService;
 import lombok.AllArgsConstructor;
@@ -14,13 +16,19 @@ public class TeacherServiceImpl implements TeacherService {
 
     @Override
     public Teacher getTeacher(Long teacherId) {
-        Teacher teacher = teacherRepository.findById(teacherId).orElseThrow(() -> new RuntimeException("There is no such a teacher"));
-        return teacher;
+        return teacherRepository.findById(teacherId).orElseThrow(()-> new RuntimeException("There is no such a teacher"));
     }
 
     @Override
-    public Teacher updateTeacher(Teacher teacher) {
-        return teacherRepository.save(teacher);
+    public TeacherDTO getTeacherDTO(Long teacherId) {
+        Teacher teacher = teacherRepository.findById(teacherId).orElseThrow(() -> new RuntimeException("There is no such a teacher"));
+        return TeacherMapper.mapToTeacherDTO(teacher, new TeacherDTO());
+    }
+
+    @Override
+    public TeacherDTO updateTeacher(Teacher teacher) {
+        Teacher teacher1 = teacherRepository.save(teacher);
+        return TeacherMapper.mapToTeacherDTO(teacher1, new TeacherDTO());
     }
 
     @Override
@@ -29,8 +37,8 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
-    public Teacher createTeacher(Teacher teacher) {
-        teacherRepository.save(teacher);
-        return teacher;
+    public TeacherDTO createTeacher(Teacher teacher) {
+        Teacher teacher1 = teacherRepository.save(teacher);
+        return TeacherMapper.mapToTeacherDTO(teacher1, new TeacherDTO());
     }
 }
