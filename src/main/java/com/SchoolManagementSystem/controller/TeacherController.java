@@ -15,7 +15,7 @@ public class TeacherController {
 
     TeacherService teacherService;
 
-    @GetMapping("/{teacherName}")
+    @GetMapping("/{teacherId}")
     public ResponseEntity<TeacherDTO> getTeacherDTO(@PathVariable Long teacherId){
         return new ResponseEntity<>(teacherService.getTeacherDTO(teacherId), HttpStatus.OK);
     }
