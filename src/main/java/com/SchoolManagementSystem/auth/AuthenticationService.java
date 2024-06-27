@@ -3,6 +3,7 @@ package com.SchoolManagementSystem.auth;
 
 import com.SchoolManagementSystem.config.JwtService;
 import com.SchoolManagementSystem.entity.Teacher;
+import com.SchoolManagementSystem.repository.StudentRepository;
 import com.SchoolManagementSystem.repository.TeacherRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 public class AuthenticationService {
 
     private final TeacherRepository teacherRepository;
+    private final StudentRepository studentRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
@@ -24,6 +26,20 @@ public class AuthenticationService {
         teacher.setPassword(passwordEncoder.encode(teacher.getPassword()));
         teacherRepository.save(teacher);
         var jwtToken = jwtService.generateToken(teacher);
+        return AuthenticationResponse.builder()
+                .token(jwtToken)
+                .build();
+    }
+    public AuthenticationResponse authenticateStudent(AuthenticationRequest request){
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        request.getEmail(),
+                        request.getPassword()
+                )
+        );
+        var user = studentRepository.findByEmail(request.getEmail())
+                .orElseThrow(()-> new RuntimeException("There is no such a student"));
+        var jwtToken = jwtService.generateToken(user);
         return AuthenticationResponse.builder()
                 .token(jwtToken)
                 .build();

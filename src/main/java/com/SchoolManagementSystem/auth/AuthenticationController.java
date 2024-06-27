@@ -25,14 +25,10 @@ public class AuthenticationController {
     public ResponseEntity<AuthenticationResponse> authenticateTeacher(@RequestBody AuthenticationRequest request){
         return new ResponseEntity<>(authenticationService.authenticateTeacher(request), HttpStatus.OK);
     }
-   /* @PostMapping("/student/create")
-    public ResponseEntity<AuthenticationResponse> createStudent(@RequestBody Student student){
-        return new ResponseEntity<>(authenticationService.createStudent(student), HttpStatus.CREATED);
-    }
     @PostMapping("/student/authenticate")
-    public ResponseEntity<AuthenticationResponse> authenticateStudent(@RequestBody AuthenticationRequest request{
-        return new ResponseEntity<>(authenticationService.authenticateStudent(student), HttpStatus.OK);
-    }*/
+    public ResponseEntity<AuthenticationResponse> authenticateStudent(@RequestBody AuthenticationRequest request){
+        return new ResponseEntity<>(authenticationService.authenticateStudent(request), HttpStatus.OK);
+    }
 
 
 
