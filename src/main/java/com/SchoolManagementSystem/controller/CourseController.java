@@ -19,6 +19,7 @@ public class CourseController {
 
     CourseService courseService;
 
+
     @GetMapping("/{courseId}")
     public ResponseEntity<CourseDTO> getCourseDTO(@PathVariable Long courseId){
         return new ResponseEntity<>(courseService.getCourseDTO(courseId), HttpStatus.OK);

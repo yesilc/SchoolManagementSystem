@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -83,11 +84,15 @@ public class AuthenticationService {
         refreshToken = authHeader.substring(7);
         userEmail = jwtService.extractUsername(refreshToken);
         if(userEmail != null){
-            var userDetails =
-                    this.teacherRepository.findByEmail(userEmail).equals(Optional.empty()) ?
-                            this.studentRepository.findByEmail(userEmail).get() : this.teacherRepository.findByEmail(userEmail).get();
-            if(jwtService.isTokenValid(refreshToken, userDetails)){
-                var accessToken = jwtService.generateToken(userDetails);
+            var userDetails = new Object();
+            Optional<Teacher> teacherOptional = this.teacherRepository.findByEmail(userEmail);
+            if(teacherOptional.isPresent()){
+                userDetails = teacherOptional.get();
+            }else {
+                userDetails = this.studentRepository.findByEmail(userEmail).orElse(null);
+            }
+            if(jwtService.isTokenValid(refreshToken, (UserDetails) userDetails)){
+                var accessToken = jwtService.generateToken((UserDetails) userDetails);
                 var authResponse = AuthenticationResponse.builder()
                         .refreshToken(refreshToken)
                         .accessToken(accessToken)

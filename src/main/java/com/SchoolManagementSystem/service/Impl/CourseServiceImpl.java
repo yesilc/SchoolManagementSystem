@@ -15,9 +15,14 @@ import lombok.AllArgsConstructor;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -26,6 +31,7 @@ public class CourseServiceImpl implements CourseService {
 
     private CourseRepository courseRepository;
     private StudentRepository studentRepository;
+    private CacheManager cacheManager;
 
     @Override
     public Course getCourse(Long courseId) {
@@ -33,12 +39,14 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
+    @Cacheable(cacheNames = "course_id", key = "#root.methodName + #courseId")
     public CourseDTO getCourseDTO(Long courseId) {
         Course course = courseRepository.findById(courseId).orElseThrow(()-> new RuntimeException("There is no such a course"));
         return CourseMapper.mapToCourseDTO(course, new CourseDTO());
     }
 
     @Override
+    @CachePut(cacheNames = "course_id", key = "getCourseDTO + #course.courseId")
     public CourseDTO updateCourse(Course course) {
         Course course1 = courseRepository.save(course);
         return CourseMapper.mapToCourseDTO(course1, new CourseDTO());
@@ -75,12 +83,14 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
+    @CacheEvict(cacheNames = {"course_id, courses"}, allEntries = true)
     public void deleteCourse(Long courseId) {
         courseRepository.deleteById(courseId);
     }
 
 
     @Override
+    @CacheEvict(cacheNames = {"course_id", "courses"}, allEntries = true)
     public void deleteStudentFromCourse(Long courseId, Long studentId) {
         Student student = studentRepository.findById(studentId)
                 .orElseThrow(() -> new RuntimeException("There is no such a Student"));
@@ -97,6 +107,7 @@ public class CourseServiceImpl implements CourseService {
 
 
     @Override
+    @CachePut(cacheNames = "course_id", key = "getCourseDTO + #courseId")
     public CourseDTO registerStudentForCourse(Long studentId, Long courseId) {
 
         Student student = studentRepository.findById(studentId).orElseThrow(() -> new RuntimeException("There is no sucha a student"));
@@ -104,13 +115,21 @@ public class CourseServiceImpl implements CourseService {
 
         course.getRegisteredStudents().add(student);
         student.getCourses().add(course);
-
         studentRepository.save(student);
         Course course1 = courseRepository.save(course);
+
+
+        cacheManager.getCache("courses").put("getAllCourses", courseRepository.findAll().stream()
+                .map(c -> CourseMapper.mapToCourseDTO(c, new CourseDTO()))
+                .collect(Collectors.toList())
+        );
+
+
         return CourseMapper.mapToCourseDTO(course1, new CourseDTO());
     }
 
     @Override
+    @Cacheable(cacheNames = "studentsFromCourse", key = "#root.methodName + #courseId", unless = "#result == null || #result.isEmpty()")
     public List<StudentDTO> getStudentsFromCourse(Long courseId) {
         Course course = courseRepository.findById(courseId).orElseThrow(()-> new RuntimeException("There is no such a course"));
         List<StudentDTO> studentDTOs = course.getRegisteredStudents().stream()
@@ -119,6 +138,7 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
+    @Cacheable(cacheNames = "courses", key = "#root.methodName", unless = "#result == null")
     public List<CourseDTO> getAllCourses() {
         List<CourseDTO> courseDTOs = courseRepository.findAll().stream()
                 .map(course -> CourseMapper.mapToCourseDTO(course, new CourseDTO())).toList();
@@ -126,6 +146,7 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
+    @CachePut(cacheNames = "getAllCourses", unless = "#result == null || #result.isEmpty()")
     public CourseDTO createCourse(Course course) {
         Course course1 = courseRepository.save(course);
         return CourseMapper.mapToCourseDTO(course1, new CourseDTO());
